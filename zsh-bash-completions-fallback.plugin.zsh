@@ -121,10 +121,10 @@ function _bash_completions_load {
         "typeset"
     )
 
-    if ! [ -f /etc/bash_completion ] &&
-       ! [ -f "$bash_completions/bash_completion" ]; then
-        return 1;
-    fi
+#    if ! [ -f /etc/bash_completion ] &&
+#       ! [ -f "$bash_completions/bash_completion" ]; then
+#        return 1;
+#    fi
 
     local -a -U _bash_completions_commands=()
     _bash_completions_fetch_supported_commands
@@ -135,11 +135,7 @@ function _bash_completions_load {
             continue;
         fi
 
-        if [ -z "$ZSH_BASH_COMPLETIONS_FALLBACK_PRELOAD_ALL" ] &&
-           ! [[ -v commands[$completion] ]] &&
-           ! [[ -v aliases[$completion] ]]; then
-            continue;
-        elif ((${reserved_words[(Ie)${completion}]})); then
+        if ((${reserved_words[(Ie)${completion}]})); then
             continue;
         fi
 
@@ -213,16 +209,6 @@ function _bash_completions_lazy_load()
     bindkey "^I" _bash-completion-init-and-continue
 }
 
-if [ -n "$ZSH_BASH_COMPLETIONS_FALLBACK_LAZYLOAD_DISABLE" ]; then
-    _bash_completions_load
-
-    if [ -n "$ZSH_BASH_COMPLETIONS_FALLBACK_LAZYLOAD_AUTO_UPDATE" ]; then
-        _bash_completions_lazy_load
-    fi
-else
-    _bash_completions_lazy_load
-fi
-
 function _bash_completions_fallback_list_handled_completions()
 {
     local -a our_completions=();
@@ -234,3 +220,13 @@ function _bash_completions_fallback_list_handled_completions()
 
     printf "%-32s\n" ${(o)our_completions[@]}
 }
+
+if [ -n "$ZSH_BASH_COMPLETIONS_FALLBACK_LAZYLOAD_DISABLE" ]; then
+    _bash_completions_load
+
+    if [ -n "$ZSH_BASH_COMPLETIONS_FALLBACK_LAZYLOAD_AUTO_UPDATE" ]; then
+        _bash_completions_lazy_load
+    fi
+else
+    _bash_completions_lazy_load
+fi
